@@ -1,17 +1,19 @@
 import requests
 
-def fetch_anime(query="Bungo Stray Dogs", limit=8):
-    """Fetches anime data from the Jikan API."""
-    url = f"https://api.jikan.moe/v4/anime?q={query}&sfw=true&limit={limit}"
+def fetch_anime(query="Bungo Stray Dogs", limit=12):
+    """Fetches anime data from the Jikan API, sorted by popularity."""
+    url = f"https://api.jikan.moe/v4/anime?q={query}&sfw=true&limit={limit}&order_by=members&sort=desc"
     try:
         response = requests.get(url)
-        response.raise_for_status() # Check for HTTP errors
+        response.raise_for_status() 
         data = response.json().get('data', [])
         
         results = []
         for show in data:
+            # FIX: We use the default Romaji title because ani-cli scrapes sites
+            # that usually don't use localized English titles or colons.
             results.append({
-                "title": show.get("title_english") or show.get("title"),
+                "title": show.get("title"), 
                 "image_url": show["images"]["jpg"]["image_url"],
                 "synopsis": show.get("synopsis", "No synopsis available.")
             })

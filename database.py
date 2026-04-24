@@ -40,3 +40,14 @@ def get_history():
     
     # Return as a list of dictionaries so it plays nicely with our AnimeCard
     return [{"title": r[0], "image_url": r[1], "season": r[2], "episode": r[3]} for r in rows]
+
+def get_last_watched_episode(title):
+    """Fetches the last watched episode for a specific show."""
+    conn = sqlite3.connect("anigui.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT last_episode FROM history WHERE title=?", (title,))
+    result = cursor.fetchone()
+    conn.close()
+    
+    # If the show is in history, return the saved episode. Otherwise, default to 1.
+    return result[0] if result else 1
